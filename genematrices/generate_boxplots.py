@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import itertools
 import csv
 
-src_dir = '/home/skywalker/Documents/TCGA/output/'
+src_dir = '/home/optimus/Documents/TCGA/data_matrices/'
 sample_type_path = '/home/skywalker/Documents/TCGA/sampleType.txt'
 disease_study_path = '/home/skywalker/Documents/TCGA/diseaseStudy.txt'
 
