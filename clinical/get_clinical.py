@@ -1,7 +1,8 @@
 import csv
+import pandas as pd
 
-path = '/home/skywalker/Downloads/nationwidechildrens.org_clinical_patient_brca.txt'
-file = list(csv.reader(open(path, 'r'), delimiter='\t'))
-print(len(file))
-for attr in file[0]:
-    print(attr)
+path = '/home/optimus/Downloads/nationwidechildrens.org_clinical_patient_brca.txt'
+df = pd.DataFrame()
+df = pd.read_table(path, sep='\t')
+print(df)
+

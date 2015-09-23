@@ -35,6 +35,24 @@ def get_col_name(dirpath, file):
     name = sample_type_dict[name[0:2]].replace(' ','\n')+'('+name[2:3]+')'
     return name
 
+def get_count_from_title(title):
+    return int(title[int(title.index('count='))+6:title.index(').png')])
+
+def rename_folders_by_count(result_dir):
+    for dir in os.listdir(result_dir):
+        cancer_dir = os.sep.join([result_dir, dir])
+        max_count = 0
+        for (dirpath, dirnames, filenames) in os.walk(cancer_dir):
+            for index, file in enumerate(filenames):
+                count = get_count_from_title(file)
+                if count > max_count:
+                    max_count = count
+        if max_count == 0:
+            os.removedirs(cancer_dir)
+        else:
+            os.rename(cancer_dir, result_dir+str(max_count)+'_maxcount_'+dir)
+
+
 if __name__=='__main__':
     sample_type_dict = create_dict(sample_type_path)
     disease_study_dict = create_dict(disease_study_path)
@@ -75,6 +93,4 @@ if __name__=='__main__':
                             title = title+'(count='+str(len(plot_df.index))+')'
                             plt.title(title)
                             ax.figure.savefig(result_cancer_dir+'/'+title+'.png')
-#    print(sample_count_df)
- #   sample_count_df.to_csv('/home/optimus/Documents/TCGA/sample_count.csv')
-
+    rename_folders_by_count(result_dir)
