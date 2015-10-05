@@ -3,7 +3,6 @@ from lifelines.utils import datetimes_to_durations
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import numpy as np
 
 src_dir = '/home/optimus/Documents/TCGA/clinical_matrices/'
 result_dir = '/home/optimus/Documents/TCGA/kmplots_3div/'
@@ -59,14 +58,11 @@ def process_df(df, file, ax):
     df = df[pd.notnull(df['vital_status'])]
     df['duration'].to_csv('duration.csv')
     lst = df['SARS'].tolist()
-    q1 = np.percentile(lst, 33.33)
-    q2 = np.percentile(lst,66.66)
-    df1 = df[df['SARS']<=q1]
-    df2 = df[(df['SARS']>q1) & (df['SARS'] <= q2)]
-    df3 = df[df['SARS']>q2]
-    plot_km(df1, ax, '<'+str(q1)+'('+str(len(df1.index))+')')
-    plot_km(df2, ax, '>='+str(q1)+' & <'+str(q2)+'('+str(len(df2.index))+')')
-    plot_km(df3, ax, '>'+str(q2)+'('+str(len(df3.index))+')')
+    avg = sum(lst)/len(lst)
+    df1 = df[df['SARS']<=avg]
+    df2 = df[df['SARS']>avg]
+    plot_km(df1, ax, '<'+str(avg)+'('+str(len(df1.index))+')')
+    plot_km(df2, ax, '>='+str(avg)+'('+str(len(df2.index))+')')
     ax.get_figure().savefig(result_dir+file+'_kmplot(samples='+str(len(df.index))+').png')
 
 

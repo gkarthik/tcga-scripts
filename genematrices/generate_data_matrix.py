@@ -50,6 +50,7 @@ if __name__ == '__main__':
                     tumor_type = os.path.basename(os.path.dirname(filepath))
                     output_path = os.sep.join([output_path, cancer_dir+'-'+tumor_type+'-matrix'])
                     print(output_path)
+                    main_df = main_df.transpose()
                     main_df.to_csv(output_path, sep='\t')
                     main_df = pd.DataFrame()
 
