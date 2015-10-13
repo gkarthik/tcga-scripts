@@ -4,24 +4,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-import csv
 
 src_dir = '/home/optimus/Documents/TCGA/clinical_matrices/'
 survival_matrices_dir = '/home/optimus/Documents/TCGA/survival_matrices/'
 tumor__km_dir = '/home/optimus/Documents/TCGA/kmplots_tumor/'
-result_dir = '/home/optimus/Documents/TCGA/kmplots_test/'
-disease_study_path = '/home/optimus/Documents/TCGA/diseaseStudy.txt'
+result_dir = '/home/optimus/Documents/TCGA/kmplots_3div/'
 
 
-def create_dict(path):
-    sample_type_list = list(csv.reader(open(path, 'r'), delimiter='\t'))
-    d = dict()
-    for i, sample_type in enumerate(sample_type_list):
-        if 1 != 0:
-            key = sample_type[0]
-            value = sample_type[1]
-            d[key] = value
-    return d
 
 def plot_km(df, ax, lbl, c_name, percentile):
     km_df = pd.DataFrame()
@@ -45,7 +34,7 @@ def plot_km(df, ax, lbl, c_name, percentile):
         else:
             print(row) 
     df['event_obs'] = event_obs
-#    df[['duration', 'event_obs', 'SARS' ]].to_csv(survival_matrices_dir+file+'_'+percentile+'_survival.csv')
+    #df[['duration', 'event_obs', 'SARS' ]].to_csv(survival_matrices_dir+file+'_'+percentile+'_survival.csv')
     E = df['event_obs']
     kmf.fit(T, event_observed=E, label=lbl)
     kmf.plot(ax = ax, ci_show = False)
@@ -62,7 +51,7 @@ def process_df(df, file, ax):
     vital_status = []
     for row in df['vital_status']:
         if row not in ['Alive', 'Dead']:
-            vital_status.append('Alive')
+            vital_status.append(None)
         else:
             vital_status.append(row)
     df['vital_status'] = vital_status
@@ -73,21 +62,15 @@ def process_df(df, file, ax):
     lst = df['SARS'].tolist()
     q1 = np.percentile(lst, 33.33)
     q2 = np.percentile(lst,66.66)
-    q1 = round(q1)
-    q2 = round(q2)
     df1 = df[df['SARS']<=q1]
     df2 = df[(df['SARS']>q1) & (df['SARS'] <= q2)]
     df3 = df[df['SARS']>q2]
-    plot_km(df1, ax, '<'+str(q1)+'('+str(len(df1.index))+')', file, "q1")
-    plot_km(df2, ax, '>='+str(q1)+' & <'+str(q2)+'('+str(len(df2.index))+')', file, "q2")
-    plot_km(df3, ax, '>'+str(q2)+'('+str(len(df3.index))+')', file, "q3")
-    plt.title(disease_study_dict[file.replace('_matrix', '').upper()]+'(n='+str(len(df.index))+')')
-    ax.get_figure().savefig(result_dir+disease_study_dict[file.replace('_matrix', '').upper()]+'(n='+str(len(df.index))+').png')
+    plot_km(df, ax, '', file, "q1")
+    ax.get_figure().savefig(result_dir+file+'_kmplot(samples='+str(len(df.index))+').png')
 
 
 
 if __name__=='__main__':
-    disease_study_dict = create_dict(disease_study_path)
     for (dirpaths, dirnames, filenames) in os.walk(src_dir):
         for file in filenames:
             kmf = KaplanMeierFitter()

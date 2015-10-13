@@ -28,12 +28,12 @@ def create_kmpot_matrix(src_path, clinical_path,  result_path, c):
             if isinstance(cell, list):
                 outliers.append(index)
                 value = cell[0]
-            col.append(int(value))
+            col.append(float(value))
         elif i == 0:
             col.append('SARS')
         else:
             col.append(float('nan'))
-            outliers.append(index)
+#            outliers.append(index)
     clinical_df['SARS'] = col
     print(clinical_df['SARS'])
     print(outliers)
